@@ -1,0 +1,28 @@
+# Project
+/dist
+
+# Dependencies
+node_modules
+
+# IDE settings
+/.idea
+/.vscode
+
+# Caches
+.eslintcache
+.yarn
+*.tsbuildinfo
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Other junk
+/temp
+/tmp
+/.temp
+/.tmp
