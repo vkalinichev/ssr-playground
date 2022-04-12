@@ -1,0 +1,28 @@
+body {
+  background: #333;
+  color: #eee;
+  font-family: sans-serif;
+}
+
+h5 {
+  font-weight: 500;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+p {
+  color: #aaa;
+  font-size: 0.875rem;
+  margin: 0;
+
+  h5 + & {
+    margin-top: 0.375em;
+  }
+}
+
+hr {
+  border: none;
+  box-shadow: 0 0.5px 0 0 #555 inset;
+  height: 1px;
+  margin: 1rem 0;
+}

@@ -52,21 +52,23 @@ async function createServer(root = process.cwd(), isProd = process.env.NODE_ENV 
         // always read fresh template in dev
         template = fs.readFileSync(resolve('index.html'), 'utf-8');
         template = await vite.transformIndexHtml(url, template);
-        render = (await vite.ssrLoadModule('/src/app/server.tsx')).render;
+        render = (await vite.ssrLoadModule('/src/server.tsx')).render;
       } else {
         template = indexProd;
         render = require('./dist/server/server.js').render;
       }
 
       const context = {};
-      const appHtml = render(url, context);
+      const appHtml = await render(url, context);
 
       if (context.url) {
         // Somewhere a `<Redirect>` was rendered
         return res.redirect(301, context.url);
       }
 
-      const html = template.replace(`<!--app-html-->`, appHtml);
+      const html = template
+        .replace(`<!--app-html-->`, appHtml)
+        .replace(`<!--app-data-->`, `window.__data = ${JSON.stringify(context.data)};`);
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
     } catch (e) {
