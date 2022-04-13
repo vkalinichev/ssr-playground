@@ -1,14 +1,14 @@
 import { api } from '@core/api';
 import { useQuery } from '@core/hooks';
 import { useEffect } from '@core/react';
-import { Post, PostShape } from '@post';
+import { Post } from '@post';
 import React, { useState } from 'react';
-import styles from './index.module.css';
+import { HydrationIndicator } from 'ui/HydrationIndicator';
 import './global.css';
+import styles from './index.module.css';
 
 export function App() {
   const [hydrated, setHydrated] = useState(false);
-  const next = useQuery(() => api.getFirst(), '/posts/1', { ssr: true });
 
   useEffect(() => {
     setHydrated(true);
@@ -17,48 +17,58 @@ export function App() {
   return (
     <div className={styles.root}>
       <h1>
-        SSR Example{' '}
-        {hydrated ? (
-          <span role='img' title='Hydrated'>
-            🟢
-          </span>
-        ) : (
-          <span role='img' title='Rendered on server'>
-            🟡
-          </span>
-        )}
+        SSR Example <HydrationIndicator hydrated={hydrated} />
       </h1>
 
-      <One data={next.data} />
+      <hr />
+
+      <One />
     </div>
   );
 }
 
-type Props = {
-  children?: () => React.ReactNode;
-  data: PostShape | undefined;
-};
+function One() {
+  const { data } = useQuery({
+    fetch: () => api.getFirst(),
+    key: '/posts/1',
+    ssr: true,
+  });
 
-function One({ data }: Props) {
-  const next = useQuery(() => api.getSecond(), '/posts/2', { ssr: true });
-  return <Post data={data} renderChildren={() => <Two {...next} />} />;
+  return <Post data={data}>{data && <Two />}</Post>;
 }
 
-function Two({ data }: Props) {
-  const next = useQuery(() => api.getThird(), '/posts/3', { ssr: true });
-  return <Post data={data} renderChildren={() => <Three {...next} />} />;
+function Two() {
+  const { data } = useQuery({
+    fetch: () => api.getSecond(),
+    key: '/posts/2',
+  });
+
+  return <Post data={data}>{data && <Three />}</Post>;
 }
 
-function Three({ data }: Props) {
-  const next = useQuery(() => api.getFourth(), '/posts/4', { ssr: true });
-  return <Post data={data} renderChildren={() => <Four {...next} />} />;
+function Three() {
+  const { data } = useQuery({
+    fetch: () => api.getThird(),
+    key: '/posts/3',
+  });
+
+  return <Post data={data}>{data && <Four />}</Post>;
 }
 
-function Four({ data }: Props) {
-  const next = useQuery(() => api.getFifth(), '/posts/5', { ssr: true });
-  return <Post data={data} renderChildren={() => <Five {...next} />} />;
+function Four() {
+  const { data } = useQuery({
+    fetch: () => api.getFourth(),
+    key: '/posts/4',
+  });
+
+  return <Post data={data}>{data && <Five />}</Post>;
 }
 
-function Five({ data }: Props) {
+function Five() {
+  const { data } = useQuery({
+    fetch: () => api.getFifth(),
+    key: '/posts/5',
+  });
+
   return <Post data={data} />;
 }

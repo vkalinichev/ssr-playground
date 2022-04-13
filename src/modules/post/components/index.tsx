@@ -1,22 +1,22 @@
 import { PostShape } from '@post';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 type Props = {
   data: PostShape | undefined;
-  renderChildren?: () => React.ReactNode;
+  children?: ReactNode;
 };
 
-export function Post({ renderChildren, data }: Props) {
+export function Post({ children, data }: Props) {
   if (!data) {
     return <>...</>;
   }
 
   return (
     <>
-      <hr />
       <h5>{data.title.slice(0, 20)}</h5>
       <p>{data.body.slice(0, 50)}</p>
-      {renderChildren?.()}
+      <hr />
+      {children}
     </>
   );
 }

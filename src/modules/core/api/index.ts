@@ -1,18 +1,16 @@
 import { isSsr } from '@core/utils';
 import { PostShape } from '@post';
 import axios from 'axios';
-
-const delay = (ms: number) => {
-  ms = isSsr() ? ms / 2 : ms;
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
+// @ts-expect-error node api
+import https from 'https';
 
 const axiosClient = axios.create({
   baseURL: 'https://jsonplaceholder.typicode.com',
+  decompress: false,
+  httpsAgent: isSsr() ? new https.Agent({ keepAlive: true }) : undefined,
 });
 
 async function get<T>(path: string): Promise<T> {
-  await delay(500);
   const response = await axiosClient.get<T>(path);
   return response.data;
 }

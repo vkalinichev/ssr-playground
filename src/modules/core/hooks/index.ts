@@ -3,18 +3,22 @@ import { useEffect } from '@core/react';
 import { isSsr } from '@core/utils';
 import { useState } from 'react';
 
-export function useQuery<T>(
-  fn: () => T | Promise<T>,
-  key: string,
-  { ssr }: { ssr: boolean }
-): { data: T | undefined } {
+export function useQuery<T>({
+  fetch,
+  key,
+  ssr = true,
+}: {
+  fetch: () => T | Promise<T>;
+  key: string;
+  ssr?: boolean;
+}): { data: T | undefined } {
   const [data, setData] = useState<T | undefined>(() => ssrCache.get(key));
 
   useEffect(() => {
     if (data) {
       return;
     }
-    const result = fn();
+    const result = fetch();
 
     if (result instanceof Promise) {
       result.then(setData);
@@ -24,7 +28,7 @@ export function useQuery<T>(
   }, []);
 
   if (isSsr() && ssr && !data) {
-    const result = fn();
+    const result = fetch();
 
     if (!(result instanceof Promise)) {
       return { data: result };
